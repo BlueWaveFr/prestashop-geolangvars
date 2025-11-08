@@ -162,17 +162,49 @@ Vous pouvez ensuite cibler dans votre CSS :
 
 ### Accéder à la page de configuration
 
+**Méthode 1 : Via le menu International (Recommandé - v2.2.0+)**
+1. Allez dans **International**
+2. Cliquez sur **"Geo + Lang Variables"**
+3. Vous accédez directement à la configuration complète
+
+**Méthode 2 : Via Module Manager**
 1. Allez dans **Modules > Module Manager**
 2. Recherchez "Geo + Lang"
-3. Cliquez sur **Configurer**
+3. Cliquez sur **Configurer** (redirige vers International)
+```
 
-La page affiche :
-- ✅ Pays détecté actuellement
-- ✅ Langue active actuellement
-- ✅ Méthode de détection utilisée (Cloudflare/GeoIP/Défaut)
-- ✅ Statut Cloudflare
-- ✅ Statut GeoIP PrestaShop
-- ✅ Documentation d'utilisation
+### 🗂️ Structure finale du module v2.2.0
+```
+geolangvars/
+├── geolangvars.php                         (v2.2.0)
+├── config.xml                              (v2.2.0)
+├── LICENSE.txt
+├── README.md                               (mis à jour)
+├── CHANGELOG.md                            (mis à jour)
+├── INSTALLATION.md
+├── index.php
+├── logo.png
+├── controllers/
+│   ├── index.php                           ← NOUVEAU
+│   └── admin/
+│       ├── index.php                       ← NOUVEAU
+│       └── AdminGeoLangVarsController.php  ← NOUVEAU
+├── views/
+│   ├── index.php
+│   └── templates/
+│       ├── index.php
+│       └── admin/
+│           ├── index.php
+│           ├── configure.tpl               ← NOUVEAU (remplace info.tpl)
+│           └── info.tpl                    (peut être supprimé)
+├── translations/
+│   ├── index.php
+│   ├── fr.php
+│   └── en.php
+└── upgrade/
+├── index.php
+├── install-2.0.0.php
+└── install-2.2.0.php                   ← NOUVEAU
 
 ### Optimisation avec Cloudflare (recommandé)
 

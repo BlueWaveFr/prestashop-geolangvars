@@ -2,10 +2,10 @@
 /**
  * Geo + Lang Variables Module
  *
- * @author    Stephane Geraut
- * @copyright Copyright (c) 2025
- * @license   AFL - Academic Free License 3.0
- * @version   2.0.0
+ * @author    Bluewave - Stephane Geraut
+ * @copyright Copyright (c) 2025 Stephane Geraut
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ * @version   2.2.0
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -20,7 +20,7 @@ class Geolangvars extends Module
     {
         $this->name = 'geolangvars';
         $this->tab = 'front_office_features';
-        $this->version = '2.0.0';
+        $this->version = '2.2.0';
         $this->author = 'Stephane Geraut';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -44,8 +44,9 @@ class Geolangvars extends Module
     public function install()
     {
         return parent::install()
-            && $this->registerHook('actionFrontControllerSetVariables') // Hook principal PS 8-9
-            && $this->registerHook('displayHeader'); // Fallback pour compatibilité
+            && $this->registerHook('actionFrontControllerSetVariables')
+            && $this->registerHook('displayHeader')
+            && $this->installTab();
     }
 
     /**
@@ -53,8 +54,51 @@ class Geolangvars extends Module
      */
     public function uninstall()
     {
-        return parent::uninstall();
+        return $this->uninstallTab()
+            && parent::uninstall();
     }
+
+    /**
+     * Installe l'onglet dans le back-office
+     *
+     * @return bool
+     */
+    protected function installTab()
+    {
+        $tab = new Tab();
+        $tab->active = 1;
+        $tab->class_name = 'AdminGeoLangVars';
+        $tab->name = [];
+
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Geo + Lang Variables';
+        }
+
+        // CORRECTION : Placer sous "International" (même niveau que Localisation)
+        $tab->id_parent = (int)Tab::getIdFromClassName('AdminInternational');
+        $tab->module = $this->name;
+
+        return $tab->add();
+    }
+
+    /**
+     * Désinstalle l'onglet du back-office
+     *
+     * @return bool
+     */
+    protected function uninstallTab()
+    {
+        $id_tab = (int)Tab::getIdFromClassName('AdminGeoLangVars');
+
+        if ($id_tab) {
+            $tab = new Tab($id_tab);
+            return $tab->delete();
+        }
+
+        return true;
+    }
+
+    // ... [le reste du code reste identique]
 
     /**
      * Hook principal pour PS 8-9 (meilleure performance)
@@ -66,13 +110,11 @@ class Geolangvars extends Module
         $countryIso = $this->getCountryIso();
         $languageIso = $this->getLanguageIso();
 
-        // Méthode recommandée pour PS 8-9
         if (isset($params['templateVars'])) {
             $params['templateVars']['visitor_country_iso'] = $countryIso;
             $params['templateVars']['visitor_lang_iso'] = $languageIso;
         }
 
-        // Fallback pour compatibilité
         $this->context->smarty->assign([
             'visitor_country_iso' => $countryIso,
             'visitor_lang_iso' => $languageIso,
@@ -107,17 +149,14 @@ class Geolangvars extends Module
     {
         $countryIso = '';
 
-        // 1. Vérifier le header Cloudflare (méthode la plus rapide)
         $countryIso = $this->getCloudflareCountry();
 
         if ($countryIso) {
             return $countryIso;
         }
 
-        // 2. Fallback sur GeoIP PrestaShop (si Cloudflare indisponible)
         $countryIso = $this->getGeoIpCountry();
 
-        // 3. Fallback ultime : pays par défaut de la boutique (optionnel)
         if (!$countryIso && Configuration::get('PS_GEOLOCATION_ENABLED')) {
             try {
                 $defaultCountry = new Country((int)Configuration::get('PS_COUNTRY_DEFAULT'));
@@ -139,7 +178,6 @@ class Geolangvars extends Module
      */
     protected function getCloudflareCountry()
     {
-        // Vérifier HTTP_CF_IPCOUNTRY (le plus commun)
         if (!empty($_SERVER['HTTP_CF_IPCOUNTRY'])) {
             $iso = strtoupper(trim($_SERVER['HTTP_CF_IPCOUNTRY']));
             if ($this->isValidCountryIso($iso)) {
@@ -147,7 +185,6 @@ class Geolangvars extends Module
             }
         }
 
-        // Vérifier CF_IPCOUNTRY (variante)
         if (!empty($_SERVER['CF_IPCOUNTRY'])) {
             $iso = strtoupper(trim($_SERVER['CF_IPCOUNTRY']));
             if ($this->isValidCountryIso($iso)) {
@@ -155,7 +192,6 @@ class Geolangvars extends Module
             }
         }
 
-        // Fallback via getallheaders()
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
             if (!empty($headers['CF-IPCountry'])) {
@@ -177,12 +213,10 @@ class Geolangvars extends Module
     protected function getGeoIpCountry()
     {
         try {
-            // Vérifier si la géolocalisation est activée
             if (!Configuration::get('PS_GEOLOCATION_ENABLED')) {
                 return '';
             }
 
-            // Méthode pour PS 8-9
             if (class_exists('\PrestaShop\PrestaShop\Adapter\ServiceLocator')) {
                 try {
                     $geolocator = ServiceLocator::get('\\PrestaShop\\PrestaShop\\Core\\Localization\\Geolocation\\Geolocator');
@@ -198,7 +232,6 @@ class Geolangvars extends Module
                         }
                     }
                 } catch (\Throwable $e) {
-                    // Log pour debug si nécessaire
                     if (_PS_MODE_DEV_) {
                         PrestaShopLogger::addLog(
                             'GeoLangVars: GeoIP error - ' . $e->getMessage(),
@@ -232,7 +265,6 @@ class Geolangvars extends Module
             // Erreur silencieuse
         }
 
-        // Fallback sur la langue par défaut
         try {
             $defaultLangId = (int)Configuration::get('PS_LANG_DEFAULT');
             $defaultLang = new Language($defaultLangId);
@@ -243,7 +275,7 @@ class Geolangvars extends Module
             // Erreur silencieuse
         }
 
-        return 'en'; // Fallback ultime
+        return 'en';
     }
 
     /**
@@ -254,13 +286,11 @@ class Geolangvars extends Module
      */
     protected function isValidCountryIso($iso)
     {
-        // Vérifier le format (2 lettres majuscules)
         if (!preg_match('/^[A-Z]{2}$/', $iso)) {
             return false;
         }
 
-        // Exclure les codes spéciaux Cloudflare
-        $excludedCodes = ['XX', 'T1']; // XX = inconnu, T1 = Tor
+        $excludedCodes = ['XX', 'T1'];
         if (in_array($iso, $excludedCodes)) {
             return false;
         }
@@ -269,54 +299,14 @@ class Geolangvars extends Module
     }
 
     /**
-     * Configuration du module (page d'info)
+     * Redirection vers l'onglet admin
      *
-     * @return string
+     * @return void
      */
     public function getContent()
     {
-        $output = '';
-
-        // Message de confirmation si besoin
-        if (Tools::isSubmit('submit' . $this->name)) {
-            $output .= $this->displayConfirmation($this->l('Settings saved successfully.'));
-        }
-
-        // Afficher les informations d'utilisation
-        $output .= $this->renderInfo();
-
-        return $output;
-    }
-
-    /**
-     * Affiche les informations d'utilisation du module
-     *
-     * @return string
-     */
-    protected function renderInfo()
-    {
-        // Détecter les valeurs actuelles pour l'affichage
-        $currentCountry = $this->getCountryIso();
-        $currentLang = $this->getLanguageIso();
-        $detectionMethod = '';
-
-        if (!empty($_SERVER['HTTP_CF_IPCOUNTRY'])) {
-            $detectionMethod = $this->l('Cloudflare CF-IPCountry header');
-        } elseif ($currentCountry) {
-            $detectionMethod = $this->l('PrestaShop GeoIP');
-        } else {
-            $detectionMethod = $this->l('Default shop country');
-        }
-
-        $this->context->smarty->assign([
-            'module_dir' => $this->_path,
-            'current_country' => $currentCountry ?: $this->l('Not detected'),
-            'current_lang' => $currentLang,
-            'detection_method' => $detectionMethod,
-            'geolocation_enabled' => Configuration::get('PS_GEOLOCATION_ENABLED'),
-            'cloudflare_detected' => !empty($_SERVER['HTTP_CF_IPCOUNTRY']),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/admin/info.tpl');
+        Tools::redirectAdmin(
+            $this->context->link->getAdminLink('AdminGeoLangVars')
+        );
     }
 }

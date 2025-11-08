@@ -2,9 +2,9 @@
 <module>
     <name>geolangvars</name>
     <displayName><![CDATA[Geo + Lang variables for Smarty (with Cloudflare support)]]></displayName>
-    <version><![CDATA[2.0.0]]></version>
+    <version><![CDATA[2.3.0]]></version>
     <description><![CDATA[Assign country ISO (GeoIP or CF‑IPCountry header) and current language ISO to Smarty.]]></description>
-    <author><![CDATA[Stephane Geraut]]></author>
+    <author><![CDATA[Bluewave - Stéphane Géraut]]></author>
     <tab><![CDATA[front_office_features]]></tab>
     <confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>
     <is_configurable>1</is_configurable>

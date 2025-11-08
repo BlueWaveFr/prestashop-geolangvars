@@ -1,10 +1,12 @@
-# Geo + Lang Variables for Smarty
+# Geo + Lang Variables for PrestaShop
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)
 ![PrestaShop](https://img.shields.io/badge/PrestaShop-8.0--9.x-orange.svg)
 ![License](https://img.shields.io/badge/license-AFL--3.0-green.svg)
 
 Module PrestaShop qui assigne automatiquement le code pays ISO du visiteur et le code langue actuel dans des variables Smarty, avec support Cloudflare optimisé.
+
+**Par Bluewave - Stéphane Géraut**
 
 ## 📋 Description
 
@@ -17,15 +19,26 @@ Les variables sont ensuite disponibles dans tous vos templates Smarty pour perso
 
 ## ✨ Fonctionnalités
 
+### Version 2.3.0 - Nouveau ! 🎉
+
+- ✅ **Tableau de bord statistiques** - Analysez les détections par pays et méthode
+- ✅ **Paramètres avancés** - Contrôlez quelles méthodes de détection utiliser
+- ✅ **Gestion GeoIP intégrée** - Activez la géolocalisation en un clic
+- ✅ **Upload de base GeoIP** - Importez votre fichier GeoIP directement
+- ✅ **Interface à onglets** - Navigation intuitive (Status, Stats, Settings, GeoIP)
+- ✅ **Collecte de statistiques** - Données anonymes (désactivable)
+- ✅ **Nettoyage automatique** - Suppression des vieilles stats
+
+### Fonctionnalités de base
+
 - ✅ Détection automatique du pays via Cloudflare (CF-IPCountry)
 - ✅ Fallback sur GeoIP PrestaShop si Cloudflare indisponible
 - ✅ Détection de la langue courante de l'utilisateur
 - ✅ Variables Smarty disponibles dans tous les templates
 - ✅ Page de configuration avec statut en temps réel
 - ✅ Compatible PrestaShop 8.0 à 9.x
-- ✅ Performances optimisées (détection par priorité)
-- ✅ Gestion intelligente des erreurs
-- ✅ Support multilingue
+- ✅ Performances optimisées (pas de requête externe)
+- ✅ Support multilingue (FR/EN)
 
 ## 📦 Installation
 
@@ -44,6 +57,43 @@ Les variables sont ensuite disponibles dans tous vos templates Smarty pour perso
 2. Allez dans **Modules > Module Manager**
 3. Recherchez "Geo + Lang"
 4. Cliquez sur **Installer**
+
+## ⚙️ Configuration
+
+### Accéder à la page de configuration
+
+**Via le menu International (Recommandé)**
+1. Allez dans **International**
+2. Cliquez sur **"Geo + Lang Variables"**
+3. Accédez aux 4 onglets de configuration
+
+### Onglets disponibles
+
+#### 1️⃣ Status
+- Détection en temps réel de votre pays/langue
+- État des services (Cloudflare, GeoIP)
+- Exemples de code Smarty
+- Recommandations
+
+#### 2️⃣ Statistics
+- Top 10 des pays détectés (30 derniers jours)
+- Répartition par méthode de détection
+- Évolution quotidienne des détections
+- Bouton de nettoyage des anciennes stats
+
+#### 3️⃣ Settings
+- **Activer/désactiver les statistiques**
+- **Période de rétention** (combien de jours garder les stats)
+- **Méthodes de détection** :
+   - ☑️ Cloudflare (priorité 1)
+   - ☑️ PrestaShop GeoIP (priorité 2)
+   - ☑️ Pays par défaut (priorité 3)
+
+#### 4️⃣ GeoIP Setup
+- **Activation en un clic** de la géolocalisation PrestaShop
+- **Upload de fichier GeoIP** (.dat ou .mmdb)
+- Liste des fichiers GeoIP installés
+- Lien direct vers MaxMind pour télécharger GeoLite2
 
 ## 🚀 Utilisation
 
@@ -97,149 +147,68 @@ Une fois le module installé, deux variables sont automatiquement disponibles da
 {/if}
 ```
 
-#### 4. Classes CSS dynamiques
-```smarty
-<body class="country-{$visitor_country_iso|lower} lang-{$visitor_lang_iso}">
-    {* Votre contenu *}
-</body>
+## 📊 Statistiques
+
+Le module collecte des statistiques anonymes pour vous aider à comprendre :
+- **Quels pays** visitent votre boutique
+- **Quelle méthode de détection** fonctionne le mieux
+- **L'évolution** des détections dans le temps
+
+### Données collectées (anonymes)
+
+- Code pays ISO
+- Code langue
+- Méthode de détection utilisée
+- Date de détection
+
+### Données NON collectées
+
+- ❌ Adresse IP complète (seulement stockée temporairement)
+- ❌ Données personnelles
+- ❌ Comportement de navigation
+- ❌ Informations de compte utilisateur
+
+### Désactiver les statistiques
+
+1. Allez dans **International > Geo + Lang Variables**
+2. Onglet **Settings**
+3. Désactivez **"Enable Statistics"**
+4. Sauvegardez
+
+## 🔧 Configuration avancée
+
+### Ordre de priorité des méthodes
+
+Par défaut :
+```
+1. Cloudflare (si activé et disponible)
+   ↓
+2. PrestaShop GeoIP (si activé et configuré)
+   ↓
+3. Pays par défaut (si activé)
 ```
 
-Résultat HTML :
-```html
-<body class="country-fr lang-fr">
-```
+Vous pouvez désactiver individuellement chaque méthode dans **Settings**.
 
-Vous pouvez ensuite cibler dans votre CSS :
-```css
-.country-fr .shipping-info {
-    background: blue;
-}
+### Configuration recommandée
 
-.country-us .shipping-info {
-    background: red;
-}
-```
+**Pour les meilleurs résultats** :
+1. ✅ Utilisez **Cloudflare** (gratuit, rapide, précis)
+2. ✅ Activez **GeoIP** comme fallback
+3. ✅ Gardez le **fallback par défaut** activé
 
-#### 5. Messages de réassurance localisés
-```smarty
-{if $visitor_country_iso == 'FR'}
-    <div class="trust-badges">
-        <span>✓ Paiement 100% sécurisé</span>
-        <span>✓ Livraison 48h</span>
-        <span>✓ SAV français</span>
-    </div>
-{elseif $visitor_country_iso|in_array:['BE','LU','CH']}
-    <div class="trust-badges">
-        <span>✓ Livraison internationale</span>
-        <span>✓ Support multilingue</span>
-    </div>
-{/if}
-```
+**Si vous n'utilisez pas Cloudflare** :
+1. ✅ Activez **PrestaShop GeoIP**
+2. ✅ Uploadez une base **GeoLite2** (gratuite)
+3. ✅ Gardez le **fallback par défaut** activé
 
-#### 6. Redirections automatiques
-```smarty
-{* Redirection automatique vers la bonne langue selon le pays *}
-{if $visitor_country_iso == 'ES' && $visitor_lang_iso != 'es'}
-    <div class="language-suggestion">
-        <p>¿Prefieres ver esta página en español?</p>
-        <a href="{$link->getLanguageLink(3)}">Cambiar a español</a>
-    </div>
-{/if}
-```
+### Upload de base GeoIP
 
-#### 7. Debug (mode développement)
-```smarty
-{if $smarty.const._PS_MODE_DEV_}
-    <div style="position: fixed; bottom: 10px; right: 10px; background: #333; color: #fff; padding: 10px; font-size: 12px; z-index: 9999; border-radius: 5px;">
-        <strong>Debug Geo+Lang:</strong><br>
-        Pays: <strong>{$visitor_country_iso|default:'N/A'}</strong><br>
-        Langue: <strong>{$visitor_lang_iso|default:'N/A'}</strong>
-    </div>
-{/if}
-```
-
-## ⚙️ Configuration
-
-### Accéder à la page de configuration
-
-**Méthode 1 : Via le menu International (Recommandé - v2.2.0+)**
-1. Allez dans **International**
-2. Cliquez sur **"Geo + Lang Variables"**
-3. Vous accédez directement à la configuration complète
-
-**Méthode 2 : Via Module Manager**
-1. Allez dans **Modules > Module Manager**
-2. Recherchez "Geo + Lang"
-3. Cliquez sur **Configurer** (redirige vers International)
-```
-
-### 🗂️ Structure finale du module v2.2.0
-```
-geolangvars/
-├── geolangvars.php                         (v2.2.0)
-├── config.xml                              (v2.2.0)
-├── LICENSE.txt
-├── README.md                               (mis à jour)
-├── CHANGELOG.md                            (mis à jour)
-├── INSTALLATION.md
-├── index.php
-├── logo.png
-├── controllers/
-│   ├── index.php                           ← NOUVEAU
-│   └── admin/
-│       ├── index.php                       ← NOUVEAU
-│       └── AdminGeoLangVarsController.php  ← NOUVEAU
-├── views/
-│   ├── index.php
-│   └── templates/
-│       ├── index.php
-│       └── admin/
-│           ├── index.php
-│           ├── configure.tpl               ← NOUVEAU (remplace info.tpl)
-│           └── info.tpl                    (peut être supprimé)
-├── translations/
-│   ├── index.php
-│   ├── fr.php
-│   └── en.php
-└── upgrade/
-├── index.php
-├── install-2.0.0.php
-└── install-2.2.0.php                   ← NOUVEAU
-
-### Optimisation avec Cloudflare (recommandé)
-
-Pour obtenir les meilleures performances :
-
-1. **Créez un compte Cloudflare** (gratuit) : https://cloudflare.com
-2. **Ajoutez votre domaine** à Cloudflare
-3. **Activez IP Geolocation** :
-    - Dashboard Cloudflare
-    - Network
-    - Activez "IP Geolocation"
-4. Le header `CF-IPCountry` sera automatiquement ajouté à chaque requête
-
-#### Avantages Cloudflare :
-- ⚡ **Ultra rapide** : Pas de requête externe
-- 🎯 **Précis** : Base de données GeoIP mise à jour en continu
-- 🌍 **Global** : Réseau mondial de serveurs
-- 🆓 **Gratuit** : Disponible sur le plan gratuit
-
-### Alternative : GeoIP PrestaShop
-
-Si vous n'utilisez pas Cloudflare :
-
-1. Allez dans **International > Localisation**
-2. Activez **Géolocalisation par adresse IP**
-3. Configurez les options de géolocalisation
-
-## 🔍 Méthodes de détection (ordre de priorité)
-```
-1. Cloudflare (CF-IPCountry header)
-   ↓ si non disponible
-2. GeoIP PrestaShop (service intégré)
-   ↓ si non disponible
-3. Pays par défaut de la boutique
-```
+1. Créez un compte gratuit sur [MaxMind](https://www.maxmind.com/en/geolite2/signup)
+2. Téléchargez **GeoLite2 Country** (.mmdb)
+3. Allez dans **International > Geo + Lang Variables > GeoIP Setup**
+4. Uploadez le fichier
+5. Cliquez sur **"Enable Geolocation Now"**
 
 ## 📊 Compatibilité
 
@@ -251,172 +220,46 @@ Si vous n'utilisez pas Cloudflare :
 
 **PHP** : 7.2 minimum (recommandé : 8.1+)
 
-## 🔧 Hooks utilisés
-
-- `actionFrontControllerSetVariables` (principal pour PS 8-9)
-- `displayHeader` (fallback pour compatibilité)
-
-## 📁 Structure du module
-```
-geolangvars/
-├── geolangvars.php              # Fichier principal
-├── config.xml                    # Configuration
-├── index.php                     # Sécurité
-├── logo.png                      # Logo 128x128
-├── README.md                     # Documentation
-├── views/
-│   └── templates/
-│       └── admin/
-│           └── info.tpl         # Template de configuration
-├── translations/
-│   └── fr.php                   # Traductions françaises
-└── upgrade/
-    └── install-2.0.0.php        # Script de mise à jour
-```
-
-## 🆙 Mise à jour depuis v1.x
-
-La mise à jour est automatique :
-
-1. **Uploadez la nouvelle version** via Module Manager
-2. **Réinstallez** ou **Mettez à jour** le module
-3. Le script `upgrade/install-2.0.0.php` s'exécute automatiquement
-4. Les nouveaux hooks sont enregistrés
-5. Vos configurations sont préservées
-
-### Changements v2.0.0
-
-- ✅ Compatibilité PrestaShop 8-9
-- ✅ Nouveau hook `actionFrontControllerSetVariables`
-- ✅ Page de configuration améliorée
-- ✅ Détection optimisée
-- ✅ Gestion d'erreurs renforcée
-- ✅ Code refactorisé et documenté
-
-## 🐛 Dépannage
+## 🔍 Dépannage
 
 ### Le pays n'est pas détecté
 
-**Problème** : `{$visitor_country_iso}` est vide ou affiche le pays par défaut
+**Problème** : `{$visitor_country_iso}` est vide
 
 **Solutions** :
-1. Vérifiez que Cloudflare est actif avec IP Geolocation
-2. Activez la géolocalisation PrestaShop (International > Localisation)
-3. Vérifiez dans la configuration du module quel système est actif
-4. Testez depuis une vraie IP (pas localhost)
+1. Vérifiez le **Status** dans la configuration
+2. Activez Cloudflare avec IP Geolocation
+3. OU activez GeoIP et uploadez une base de données
+4. Vérifiez que au moins une méthode est activée dans **Settings**
 
-### Variables non disponibles dans le template
+### Les statistiques ne s'affichent pas
 
-**Problème** : Les variables ne s'affichent pas
-
-**Solutions** :
-1. Videz le cache : **Paramètres avancés > Performance > Vider le cache**
-2. Désactivez la compilation Smarty en mode dev
-3. Vérifiez que le module est installé et activé
-4. Testez avec `{$visitor_country_iso|@var_dump}` pour voir le contenu
-
-### Cloudflare détecté mais pays incorrect
-
-**Problème** : Cloudflare est actif mais le pays est faux
+**Problème** : L'onglet Statistics est vide
 
 **Solutions** :
-1. Vérifiez que IP Geolocation est activée dans Cloudflare
-2. Purgez le cache Cloudflare
-3. Testez depuis une IP différente
-4. Vérifiez les headers avec : `var_dump($_SERVER['HTTP_CF_IPCOUNTRY']);`
+1. Vérifiez que **"Enable Statistics"** est activé (Settings)
+2. Attendez quelques visites sur votre site
+3. Vérifiez que la table `ps_geolangvars_stats` existe en base
 
-### Performance lente
+### Erreur lors de l'upload GeoIP
 
-**Problème** : Le site charge lentement
+**Problème** : Échec de l'upload du fichier
 
 **Solutions** :
-1. Utilisez Cloudflare (plus rapide que GeoIP)
-2. Activez le cache Smarty
-3. Désactivez le mode debug en production
-
-## 💡 Cas d'usage avancés
-
-### Bannière promotionnelle par pays
-```smarty
-{capture name="country_promo"}
-    {if $visitor_country_iso == 'FR'}
-        🎉 Black Friday : -50% sur tout le site !
-    {elseif $visitor_country_iso == 'US'}
-        🎉 Black Friday: 50% OFF on everything!
-    {elseif $visitor_country_iso == 'DE'}
-        🎉 Black Friday: 50% Rabatt auf alles!
-    {else}
-        🎉 Black Friday: Special offers!
-    {/if}
-{/capture}
-
-<div class="promo-banner">
-    {$smarty.capture.country_promo}
-</div>
-```
-
-### Formulaire de contact adapté
-```smarty
-<form action="{$urls.pages.contact}" method="post">
-    {if $visitor_country_iso == 'FR'}
-        <input type="tel" name="phone" placeholder="Téléphone (ex: 06 12 34 56 78)">
-    {elseif $visitor_country_iso == 'US'}
-        <input type="tel" name="phone" placeholder="Phone (e.g., (555) 123-4567)">
-    {else}
-        <input type="tel" name="phone" placeholder="Phone">
-    {/if}
-    
-    {* Reste du formulaire *}
-</form>
-```
-
-### Affichage de devises selon le pays
-```smarty
-{if $visitor_country_iso|in_array:['FR','BE','LU','DE','ES','IT']}
-    {* Zone Euro *}
-    <span class="price">{$product.price} €</span>
-{elseif $visitor_country_iso == 'GB'}
-    <span class="price">£{$product.price_gbp}</span>
-{elseif $visitor_country_iso == 'US'}
-    <span class="price">${$product.price_usd}</span>
-{/if}
-```
-
-### Analytics et tracking
-```smarty
-<script>
-    // Envoi à Google Analytics
-    gtag('event', 'page_view', {
-        'country': '{$visitor_country_iso}',
-        'language': '{$visitor_lang_iso}'
-    });
-    
-    // Données disponibles en JavaScript
-    window.geoData = {
-        country: '{$visitor_country_iso}',
-        language: '{$visitor_lang_iso}'
-    };
-</script>
-```
+1. Vérifiez que le fichier est bien `.dat` ou `.mmdb`
+2. Vérifiez les permissions du dossier `/app/Resources/geoip/`
+3. Vérifiez la taille max d'upload PHP (`upload_max_filesize`)
 
 ## 📝 Changelog
 
-### Version 2.0.0 (2025-01-08)
-- ✨ Compatibilité PrestaShop 8.0 à 9.x
-- ✨ Nouveau hook `actionFrontControllerSetVariables`
-- ✨ Page de configuration avec statut temps réel
-- ✨ Code refactorisé et optimisé
-- ✨ Gestion d'erreurs améliorée
-- ✨ Documentation complète
-
-### Version 1.6.0
-- ✅ Support Cloudflare CF-IPCountry
-- ✅ Fallback GeoIP
-- ✅ Variables Smarty de base
+Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique complet des versions.
 
 ## 👤 Auteur
 
-**Stephane Geraut**
+**Bluewave - Stéphane Géraut**
+
+- GitHub: [@votre-username](https://github.com/votre-username)
+- Site: [bluewave.example.com](https://bluewave.example.com)
 
 ## 📄 Licence
 
@@ -426,9 +269,9 @@ La mise à jour est automatique :
 
 Pour toute question ou problème :
 1. Consultez la section **Dépannage** ci-dessus
-2. Vérifiez la **page de configuration** du module
+2. Vérifiez l'onglet **Status** du module
 3. Activez le **mode debug** pour voir les valeurs
-4. Contactez le support
+4. Ouvrez une [issue sur GitHub](https://github.com/votre-username/prestashop-geolangvars/issues)
 
 ## 🌟 Contribuer
 
@@ -436,4 +279,46 @@ Les contributions sont les bienvenues ! N'hésitez pas à proposer des améliora
 
 ---
 
-**Made with ❤️ for PrestaShop community**
+**Made with ❤️ by Bluewave - Stéphane Géraut**
+```
+
+---
+
+## 📁 Étape 8 : Structure finale du module v2.3.0
+```
+geolangvars/
+├── geolangvars.php                                (v2.3.0 - Bluewave)
+├── config.xml                                     (v2.3.0)
+├── LICENSE.txt
+├── README.md                                      (mis à jour)
+├── CHANGELOG.md                                   (mis à jour)
+├── INSTALLATION.md
+├── index.php
+├── logo.png
+├── controllers/
+│   ├── index.php
+│   └── admin/
+│       ├── index.php
+│       └── AdminGeoLangVarsController.php        (v2.3.0 - avec 4 onglets)
+├── views/
+│   ├── index.php
+│   └── templates/
+│       ├── index.php
+│       └── admin/
+│           ├── index.php
+│           ├── configure.tpl                      (v2.3.0 - navigation)
+│           └── tabs/
+│               ├── index.php                      ← NOUVEAU
+│               ├── status.tpl                     ← NOUVEAU
+│               ├── stats.tpl                      ← NOUVEAU
+│               ├── settings.tpl                   ← NOUVEAU
+│               └── geoip.tpl                      ← NOUVEAU
+├── translations/
+│   ├── index.php
+│   ├── fr.php
+│   └── en.php
+└── upgrade/
+├── index.php
+├── install-2.0.0.php
+├── install-2.2.0.php
+└── install-2.3.0.php                          ← NOUVEAU

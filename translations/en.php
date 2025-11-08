@@ -1,0 +1,35 @@
+<?php
+
+global $_MODULE;
+$_MODULE = [];
+$_MODULE['<{geolangvars}prestashop>geolangvars_8b5a2f0e8b9e8d7c5f3e2b1a4c6d8e9f'] = 'Geo + Lang variables for Smarty (with Cloudflare support)';
+$_MODULE['<{geolangvars}prestashop>geolangvars_7d4f3c2b1a9e8d7c6f5e4d3c2b1a9e8d'] = 'Assign country ISO (GeoIP or CF‑IPCountry header) and current language ISO to Smarty.';
+$_MODULE['<{geolangvars}prestashop>geolangvars_confirmuninstall'] = 'Are you sure you want to uninstall this module?';
+$_MODULE['<{geolangvars}prestashop>info_status'] = 'Geo + Lang Variables - Status';
+$_MODULE['<{geolangvars}prestashop>info_current_detection'] = 'Current Detection:';
+$_MODULE['<{geolangvars}prestashop>info_country_iso'] = 'Country ISO:';
+$_MODULE['<{geolangvars}prestashop>info_language_iso'] = 'Language ISO:';
+$_MODULE['<{geolangvars}prestashop>info_detection_method'] = 'Detection method:';
+$_MODULE['<{geolangvars}prestashop>info_cloudflare'] = 'Cloudflare:';
+$_MODULE['<{geolangvars}prestashop>info_active'] = 'Active';
+$_MODULE['<{geolangvars}prestashop>info_not_detected'] = 'Not detected';
+$_MODULE['<{geolangvars}prestashop>info_prestashop_geoip'] = 'PrestaShop GeoIP:';
+$_MODULE['<{geolangvars}prestashop>info_enabled'] = 'Enabled';
+$_MODULE['<{geolangvars}prestashop>info_disabled'] = 'Disabled';
+$_MODULE['<{geolangvars}prestashop>info_available_vars'] = 'Available Smarty Variables:';
+$_MODULE['<{geolangvars}prestashop>info_visitor_country'] = 'Visitor country code (e.g., FR, US, GB)';
+$_MODULE['<{geolangvars}prestashop>info_current_lang'] = 'Current language code (e.g., fr, en, es)';
+$_MODULE['<{geolangvars}prestashop>info_usage_example'] = 'Usage Example:';
+$_MODULE['<{geolangvars}prestashop>info_recommendations'] = 'Recommendations:';
+$_MODULE['<{geolangvars}prestashop>info_best_option'] = 'Best option:';
+$_MODULE['<{geolangvars}prestashop>info_use_cloudflare'] = 'Use Cloudflare with IP Geolocation enabled for optimal performance and accuracy.';
+$_MODULE['<{geolangvars}prestashop>info_alternative'] = 'Alternative:';
+$_MODULE['<{geolangvars}prestashop>info_enable_ps_geo'] = 'Enable PrestaShop Geolocation in International > Localization.';
+$_MODULE['<{geolangvars}prestashop>info_priority'] = 'Priority:';
+$_MODULE['<{geolangvars}prestashop>info_priority_order'] = 'Cloudflare → PrestaShop GeoIP → Default country';
+$_MODULE['<{geolangvars}prestashop>info_warning_no_detection'] = 'Neither Cloudflare nor PrestaShop Geolocation is detected. The module will use the shop\'s default country.';
+$_MODULE['<{geolangvars}prestashop>info_settings_saved'] = 'Settings saved successfully.';
+$_MODULE['<{geolangvars}prestashop>info_cloudflare_header'] = 'Cloudflare CF-IPCountry header';
+$_MODULE['<{geolangvars}prestashop>info_prestashop_geoip_service'] = 'PrestaShop GeoIP';
+$_MODULE['<{geolangvars}prestashop>info_default_shop_country'] = 'Default shop country';
+$_MODULE['<{geolangvars}prestashop>info_not_detected_value'] = 'Not detected';
